@@ -1,3 +1,3 @@
-#lang reader "reader.rkt"
+#lang brainfuck
 Greatest language ever!
 ++++-+++-++-++[>++++-+++-++-++<-]>.

@@ -6,7 +6,7 @@
   ; tokens as needed (like a generator))
   ; We then parse the tokens
   (define parse-tree (parse path (make-tokenizer port)))
-  (define module-datum `(module bf-mod "expander.rkt"
+  (define module-datum `(module bf-mod brainfuck/expander
                           ,parse-tree))
   (datum->syntax #f module-datum))
 (provide read-syntax)
