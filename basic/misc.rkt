@@ -1,6 +1,6 @@
 #lang br
 (require "struct.rkt")
-(provide b-rem b-print b-let b-input)
+(provide b-rem b-print b-let b-input b-import b-export)
 
 (define (b-rem val) (void))
 
@@ -15,3 +15,9 @@
   #'(b-let ID (let* ([str (read-line)]
                      [num (string->number (string-trim str))])
                 (or num str))))
+
+; IMPORT and EXPORT are handled by our expander, so we can replace their
+; occurrences in the outputted racket with void
+(define-macro (b-import NAME) #'(void))
+
+(define-macro (b-export NAME) #'(void))

@@ -3,7 +3,16 @@
 
 (define-lex-abbrev digits (:+ (char-set "0123456789")))
 
-(define-lex-abbrev reserved-terms (:or "print" "goto" "end" "+" ":" ";" "let" "=" "input" "-" "*" "/" "^" "mod" "(" ")" "if" "then" "else" "<" ">" "<>" "and" "or" "not" "gosub" "return" "for" "to" "step" "next"))
+(define-lex-abbrev reserved-terms (:or "print" "goto" "end" "+" ":" ";" "let"
+                                       "=" "input" "-" "*" "/" "^" "mod" "("
+                                       ")" "if" "then" "else" "<" ">" "<>"
+                                       "and" "or" "not" "gosub" "return" "for"
+                                       "to" "step" "next" "def" "," "import"
+                                       "export"))
+
+; These characters are NOT allowed in racket identifiers
+(define-lex-abbrev racket-id-kapu
+  (:or whitespace (char-set "()[]{}\",'`;#|\\")))
 
 (define basic-lexer
   (lexer-srcloc
@@ -12,6 +21,9 @@
   [whitespace (token lexeme #:skip? #t)]
   ; We stop BEFORE the newline since we still need it to break up statements
   [(from/stop-before "rem" "\n") (token 'REM lexeme)]
+  [(:seq "[" (:+ (:~ racket-id-kapu)) "]")
+   (token 'RACKET-ID
+          (string->symbol (trim-ends "[" lexeme "]")))]
   [reserved-terms (token lexeme lexeme)]
   ; Match variable names, which are one alphabetic character optionally
   ; followed by more alphabetic, numeric, or the dollar sign. Tokenize as 'ID

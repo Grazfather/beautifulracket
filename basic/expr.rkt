@@ -1,5 +1,6 @@
 #lang br
-(provide b-expr b-sum b-product b-neg b-expt)
+(require "line.rkt")
+(provide b-expr b-sum b-product b-neg b-expt b-def b-func)
 
 (define (b-expr expr)
   (if (integer? expr) (inexact->exact expr) expr))
@@ -26,3 +27,25 @@
   [(_ VAL) #'VAL]
   [(_ LEFT "^" RIGHT) #'(expt LEFT RIGHT)])
 
+; We use syntax-local-list-expression to get this expression to the top of the
+; module, so that the function defined can be referenced by basic code before
+; the def in the file
+(define-macro (b-def FUNC-ID VAR-ID ... EXPR)
+  (syntax-local-lift-expression
+   #'(set! FUNC-ID (λ (VAR-ID ...) EXPR))))
+
+(define-macro (b-func FUNC-ID ARG ...)
+  #'(if (procedure? FUNC-ID)
+        (convert-result (FUNC-ID ARG ...))
+        (raise-line-error
+         (format "expected ~a to be a function, got ~v"
+                 'FUNC-ID FUNC-ID))))
+
+(define (convert-result result)
+  (cond
+    [(number? result) (b-expr result)]
+    [(string? result) result]
+    [(boolean? result) (if result 1 0)]
+    [else
+     (raise-line-error
+      (format "unknown data type: ~v" result))]))
