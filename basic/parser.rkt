@@ -11,6 +11,7 @@ b-line : b-line-num [b-statement] (/":" [b-statement])* [b-rem]
 @b-line-num : INTEGER
 @b-statement : b-end | b-print | b-goto
              | b-let | b-input | b-if
+             | b-gosub | b-return | b-for | b-next
 b-rem : REM
 b-end : /"end"
 b-print : /"print" [b-printable] (/";" [b-printable])*
@@ -23,6 +24,10 @@ b-input : /"input" b-id
 # We splice the b-id so we get the identifier in rules where it shows up, but
 # also the syntax-property will be set on the syntax object
 @b-id : ID
+b-gosub : /"gosub" b-expr
+b-return : /"return"
+b-for : /"for" b-id /"=" b-expr /"to" b-expr [/"step" b-expr]
+b-next : /"next" b-id
 # These recursive rules enforce the correct order of operations. b-sum also
 # does subtraction because they have the same precedence. Same thing with
 # product doing mod, exp, and division.
