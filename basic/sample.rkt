@@ -1,7 +1,8 @@
 #lang basic
-10 let x = "foo"
-20 y = 42
-30 let z = x
-40 input i
-50 print z ; y + y + 10 ; x ; i
-60 print  -1 + 2 - 3 * (4 + 5) / 6 ^ 7 + 8 mod 9
+10 print 2 < 4 rem 1
+20 print 2 > 4 rem 0
+30 print 2 = 4 rem 0
+40 print 2 <> 4 rem 1
+50 print 2 < 4 or 2 > 4 or 2 = 4 rem 1
+60 print 2 < 4 and 2 > 4 and 2 = 4 rem 0
+70 print not 2 > 4 or not 2 < 4 rem 1
