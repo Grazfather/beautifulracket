@@ -1,6 +1,6 @@
 #lang br
-(require "struct.rkt")
-(provide b-rem b-print b-let b-input b-import b-export)
+(require "struct.rkt" "expr.rkt")
+(provide b-rem b-print b-let b-input b-import b-export b-repl)
 
 (define (b-rem val) (void))
 
@@ -21,3 +21,22 @@
 (define-macro (b-import NAME) #'(void))
 
 (define-macro (b-export NAME) #'(void))
+
+(define-macro (b-repl . ALL-INPUTS)
+  (with-pattern
+      ([INPUTS (pattern-case-filter #'ALL-INPUTS
+                 [(b-print . PRINT-ARGS)
+                  #'(b-print . PRINT-ARGS)]
+                 ; We want to print the result of expressions
+                 [(b-expr . EXPR-ARGS)
+                  #'(b-print (b-expr . EXPR-ARGS))]
+                 ; Unlike when running basic scripts, we can't pre-define all
+                 ; variables and set! them later, so we just use define
+                 [(b-let ID VAL)
+                  #'(define ID VAL)]
+                 [(b-def FUNC-ID VAR-ID ... EXPR)
+                  #'(define (FUNC-ID VAR-ID ...) EXPR)]
+                 ; anything else, like goto doesn't make sense in a repl
+                 [ANYTHING-ELSE
+                  #'(error 'invalid-repl-input)])])
+    #'(begin . INPUTS)))

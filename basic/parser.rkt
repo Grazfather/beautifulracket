@@ -52,3 +52,5 @@ b-expt : [b-expt "^"] b-value
 ; undeclared usage
 b-func : (ID | RACKET-ID) /"(" b-expr [/"," b-expr]* /")"
 @b-number : INTEGER | DECIMAL
+; This is a special rule that is used in the repl
+b-repl : (b-statement | b-expr) (/":" [@b-repl])*
